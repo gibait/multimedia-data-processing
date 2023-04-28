@@ -8,8 +8,8 @@
 #include <string>
 #include <vector>
 
-#include "bitwriter.h"
-#include "bitreader.h"
+#include "bitrw/bitwriter.h"
+#include "bitrw/bitreader.h"
 
 
 using namespace std;
