@@ -106,6 +106,34 @@ bool load_pam(const string &filename, mat<uint8_t> &mat_)
         return true;
 }
 
+template<typename T>
+// In place flip
+void flip_image(mat<T> &to_flip)
+{
+        auto rows = to_flip.rows();
+
+        for (int r = 0; r < rows / 2; ++r) {
+                for (int c = 0; c < to_flip.columns(); ++c) {
+                        // uses array swap in case of rgb
+                        swap(to_flip(r, c), to_flip(rows - r - 1, c));
+                }
+        }
+}
+
+template<typename T>
+// In place mirror
+void mirror_image(mat<T> &to_mirror)
+{
+        auto cols = to_mirror.columns();
+
+        for (int r = 0; r < to_mirror.rows(); ++r) {
+                for (int c = 0; c < cols / 2; ++c) {
+                        // uses array swap in case of rgb
+                        swap(to_mirror(r, c), to_mirror(r, cols - c - 1));
+                }
+        }
+}
+
 // RGB pam save
 bool save_pam(mat<rgb> &mat_, const string &filename)
 {
@@ -200,36 +228,6 @@ bool load_pam(const string &filename, mat<rgb> &mat_)
 
         return true;
 }
-
-template<typename T>
-// In place flip
-void flip_image(mat<T> &to_flip)
-{
-        auto rows = to_flip.rows();
-
-        for (int r = 0; r < rows / 2; ++r) {
-                for (int c = 0; c < to_flip.columns(); ++c) {
-                        // uses array swap in case of rgb
-                        swap(to_flip(r, c), to_flip(rows - r - 1, c));
-                }
-        }
-}
-
-template<typename T>
-// In place mirror
-void mirror_image(mat<T> &to_mirror)
-{
-        auto cols = to_mirror.columns();
-
-        for (int r = 0; r < to_mirror.rows(); ++r) {
-                for (int c = 0; c < cols / 2; ++c) {
-                        // uses array swap in case of rgb
-                        swap(to_mirror(r, c), to_mirror(r, cols - c - 1));
-                }
-        }
-}
-
-
 
 int main(int argc, char **argv)
 {
