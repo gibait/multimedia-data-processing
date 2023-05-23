@@ -21,3 +21,13 @@ add_executable(packbits packbits/packbits.cpp
         include/bitrw/bitreader.h)
 
 add_executable(pam pam/pam.cpp pam/matrix.h)
+add_executable(y4m_gray YUV4MPEG2/y4m_gray.cpp)
+add_executable(y4m_color YUV4MPEG2/y4m_color.cpp)
+
+add_executable(torrent_dump bittorrent/torrent.cpp)
+
+add_executable(pam_split PAM/split.cpp include/matrix/mat.h)
+add_executable(pam_combine PAM/combine.cpp include/matrix/mat.h)
+
+add_executable(esame-17 bayer_decode/bayer_decode.cpp include/matrix/mat.h)
+add_executable(esame-16 LZ4/lz4decomp.cpp)
