@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 project(multimedia_data_processing)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include_directories(include)
@@ -13,21 +13,21 @@ add_executable(write_int32 write_int32/write_int32.cpp)
 add_executable(read_int32 read_int32/read_int32.cpp)
 add_executable(write_int11 write_int11/write_int11.cpp)
 add_executable(read_int11 read_int11/read_int11.cpp)
-
 add_executable(elias elias/elias.cpp include/bitrw/bitwriter.h include/bitrw/bitreader.h)
-
 add_executable(packbits packbits/packbits.cpp
         include/bitrw/bitwriter.h
         include/bitrw/bitreader.h)
-
 add_executable(pam pam/pam.cpp pam/matrix.h)
 add_executable(y4m_gray YUV4MPEG2/y4m_gray.cpp)
 add_executable(y4m_color YUV4MPEG2/y4m_color.cpp)
-
 add_executable(torrent_dump bittorrent/torrent.cpp)
-
 add_executable(pam_split PAM/split.cpp include/matrix/mat.h)
 add_executable(pam_combine PAM/combine.cpp include/matrix/mat.h)
-
 add_executable(esame-17 bayer_decode/bayer_decode.cpp include/matrix/mat.h)
 add_executable(esame-16 LZ4/lz4decomp.cpp)
+add_executable(FIT FIT/main.cpp)
+add_executable(alpha_compositing alpha_compositing/compose.cpp)
+add_executable(MDCT MDCT/main.cpp)
+add_executable(profMDCT MDCT/prof.cpp)
+add_executable(snappy snappy/main.cpp)
+add_executable(LZ78 LZ78/main.cpp)

@@ -6,8 +6,6 @@
 #include <cstdint>
 #include <fstream>
 #include <iostream>
-#include <span>
-#include <valarray>
 #include <vector>
 
 

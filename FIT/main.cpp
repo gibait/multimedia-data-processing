@@ -45,7 +45,7 @@ struct FIT_definition_record_t {
         uint8_t architecture{};
         uint16_t global_message_number{};
         uint8_t num_fields{};
-        vector<FIT_field_t> fields{};
+        vector<FIT_field_t> fields;
 };
 
 
@@ -93,7 +93,9 @@ void parse_definition_record(std::ifstream& is, uint8_t local, std::map<uint8_t,
         }
 
         // Save record
-        definitions[local & 0x0f] = record;
+        if (definitions.find(local & 0x0f) == definitions.end()) {
+                definitions[local & 0x0f] = record;
+        }
 
         // Save local to global association
         associations[local & 0x0f] = record.global_message_number;
@@ -130,8 +132,7 @@ void parse_data_record(std::ifstream& is, uint8_t local, map<uint8_t, FIT_defini
 
                 if (avg_speed_field && field.number == 13) {
                         // cout << "avg_speed = " << format("{:.3f}\n", float(value) * 60 * 60 / (1000 * 1000));
-                        cout.precision(4);
-                        cout << "avg_speed = " << setw(3) << float(value) * 60 * 60 / (1000 * 1000) << "\n";
+                        cout << "avg_speed = " << setprecision(4) << float(value) * 60 * 60 / (1000 * 1000) << "\n";
                 }
         }
 }
