@@ -18,8 +18,7 @@ struct PAM_t {
         std::string tupltype;
 };
 
-bool parse_header(std::ifstream &is, PAM_t& header)
-{
+bool parse_header(std::ifstream &is, PAM_t &header) {
         std::string line;
         getline(is, line);
         if (line != "P7") {

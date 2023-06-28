@@ -83,7 +83,6 @@ int main(int argc, char **argv)
                 return 1;
         }
 
-        mat<vec3b> rgb;
         combine(argv[1]);
 
         return 0;

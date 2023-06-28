@@ -1,24 +1,18 @@
 //
 // Created by giba on 22/05/23.
 //
-#include <matrix/mat.h>
-
 #include <array>
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 #include "parse_header.h"
 
 using vec3b = std::array<uint8_t, 3>;
 
-
 bool split(mat<vec3b>& rgb, const std::string& file)
 {
-        // Filename retrieving
-        std::string name;
-        name = file.substr(0, file.find('.'));
-
-        std::ifstream is(file, std::ios::binary);
+        std::ifstream is(file + ".pam", std::ios::binary);
         if (!is) {
                 std::cout << "Impossibile aprire il file";
                 return false;
@@ -46,19 +40,19 @@ bool split(mat<vec3b>& rgb, const std::string& file)
 
         for (int r = 0; r < rgb.rows(); ++r) {
                 for (int c = 0; c < rgb.cols(); ++c) {
-                        R(r,c) = rgb(r,c)[0];
-                        G(r,c) = rgb(r,c)[1];
-                        B(r,c) = rgb(r,c)[2];
+                        R(r, c) = rgb(r, c)[0];
+                        G(r, c) = rgb(r, c)[1];
+                        B(r, c) = rgb(r, c)[2];
                 }
         }
 
         // Saving
         std::ofstream os[3];
-        os[0].open(name + "_R.pam", std::ios::binary);
-        os[1].open(name + "_G.pam", std::ios::binary);
-        os[2].open(name + "_B.pam", std::ios::binary);
+        os[0].open(file + "_R.pam", std::ios::binary);
+        os[1].open(file + "_G.pam", std::ios::binary);
+        os[2].open(file + "_B.pam", std::ios::binary);
 
-        for (auto &o : os) {
+        for (auto &o: os) {
                 o << "P7\n";
                 o << "WIDTH " << w << "\n";
                 o << "HEIGHT " << h << "\n";
