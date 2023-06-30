@@ -10,3 +10,4 @@ cmake-build-*
 .idea
 build/
 *.o
+.cache/

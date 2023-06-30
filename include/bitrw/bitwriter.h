@@ -13,7 +13,7 @@ std::ostream &raw_write(std::ostream &os, const T &val, size_t size = sizeof(T))
 class bitwriter {
         uint8_t buffer_;
         int n_ = 0;
-        std::ostream& os_;
+        std::ostream &os_;
 
         std::ostream &write_bit(uint32_t bit) {
                 buffer_ = (buffer_ << 1) | (bit & 1);
@@ -26,7 +26,7 @@ class bitwriter {
         }
 
 public:
-        explicit bitwriter(std::ostream& os) : os_(os) {}
+        explicit bitwriter(std::ostream &os) : os_(os) {}
 
         std::ostream &write(uint32_t u, uint8_t n) {
                 for (int i = n - 1; i >= 0; --i) {

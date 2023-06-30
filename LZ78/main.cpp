@@ -9,19 +9,16 @@
 #include <map>
 #include <vector>
 
-class bitwriter
-{
+class bitwriter {
         uint8_t buffer_ = 0;
         int n_ = 0;
-        std::ofstream& os_;
+        std::ofstream &os_;
 
-        std::ostream& raw_write(uint8_t val, uint8_t size = sizeof(val))
-        {
-                return os_.write(reinterpret_cast<const char*>(&val), size);
+        std::ostream &raw_write(uint8_t val, uint8_t size = sizeof(val)) {
+                return os_.write(reinterpret_cast<const char *>(&val), size);
         }
 
-        std::ostream& write_bit(uint8_t shifted)
-        {
+        std::ostream &write_bit(uint8_t shifted) {
                 // Shift buffer and add LSB of to be written byte
                 buffer_ = (buffer_ << 1) | (shifted & 1);
                 // Increase number of bit in buffer
@@ -35,24 +32,21 @@ class bitwriter
         }
 
 public:
-        explicit bitwriter(std::ofstream& os) : os_(os) {} ;
+        explicit bitwriter(std::ofstream &os) : os_(os){};
 
-        std::ostream& write(uint8_t byte, uint8_t size)
-        {
+        std::ostream &write(uint8_t byte, uint8_t size) {
                 // Write a bit from LSB to MSB
                 for (int i = size - 1; i >= 0; --i) {
-                        write_bit( byte >> i );
+                        write_bit(byte >> i);
                 }
                 return os_;
         }
 
-        std::ostream& operator() (uint8_t byte, uint8_t size)
-        {
+        std::ostream &operator()(uint8_t byte, uint8_t size) {
                 return write(byte, size);
         }
 
-        void flush()
-        {
+        void flush() {
                 if (n_ > 0) {
                         raw_write(buffer_, 8);
                 }
@@ -63,20 +57,36 @@ public:
         }
 };
 
-auto check_n_bits(std::map<std::vector<uint8_t>, uint8_t>& dict, int maxbits, size_t& nbits)
-{
-        if (nbits > unsigned(maxbits)) {
-                dict.clear();
-                nbits = 1;
-                // std::cout << "[svuoto]";
-                return false;
-        } else {
-                return true;
-        }
-}
+class Dict {
+        uint8_t maxBits_ = 0;
+        std::map<std::vector<uint8_t>, uint8_t> data_;
 
-bool lz78encode(const std::string& input_filename, const std::string& output_filename, int maxbits)
-{
+public:
+        Dict(uint8_t nBits) : maxBits_(nBits){};
+
+        void operator[](std::vector<uint8_t> vec) {
+                if (std::bit_width(data_.size() + 1) > maxBits_) {
+                        maxBits_ = 0;
+                        data_.clear();
+                        return;
+                }
+                data_[vec] = data_.size() + 1;
+        }
+
+        const uint8_t operator()(std::vector<uint8_t> vec) const {
+                return data_.at(vec);
+        }
+
+        bool contains(std::vector<uint8_t> vec) {
+                return data_.contains(vec);
+        }
+
+        size_t size() {
+                return data_.size();
+        }
+};
+
+bool lz78encode(const std::string &input_filename, const std::string &output_filename, int maxbits) {
         std::ifstream is(input_filename, std::ios::binary);
         if (!is) {
                 std::cout << "errore durante l'apertura del file di input";
@@ -94,17 +104,17 @@ bool lz78encode(const std::string& input_filename, const std::string& output_fil
                 return false;
         }
 
-        std::map<std::vector<uint8_t>, uint8_t> dict;
         uint8_t ch;
         size_t n_bits = 1;
         bitwriter bw(os);
+        Dict dict(maxbits);
 
         os << "LZ78";
         bw(maxbits, 5);
 
         is.read(reinterpret_cast<char*>(&ch), sizeof(ch));
         std::vector<uint8_t> vec = {ch};
-        dict[vec] = dict.size() + 1;
+        dict[vec];
 
         bw(ch, 8);
         // std::cout << std::format("({}, {})\n", 0, char(ch));
@@ -116,49 +126,45 @@ bool lz78encode(const std::string& input_filename, const std::string& output_fil
                 if (is.peek() == EOF) {
                         break;
                 }
-                
-                n_bits = std::bit_width(dict.size());
-                check_n_bits(dict, maxbits, n_bits);
 
-                is.read(reinterpret_cast<char*>(&ch), sizeof(ch));
+                is.read(reinterpret_cast<char *>(&ch), sizeof(ch));
                 vec = {ch};
 
-                if (!dict.contains(vec)) {        
-                        dict[vec] = dict.size() + 1;
+                if (!dict.contains(vec)) {
+                        dict[vec];
                 } else {
                         do {
                                 if (is.peek() == EOF) {
                                         break;
                                 }
-                                is.read(reinterpret_cast<char*>(&next), sizeof(next));
+                                is.read(reinterpret_cast<char *>(&next), sizeof(next));
                                 vec.push_back(next);
                         } while (dict.contains(vec));
 
                         // Aggiungiamo il nuovo carattere alla sequenza più lunga trovata
-                        dict[vec] = dict.size() + 1;
+                        dict[vec];
                         // Lo eliminiamo dal vettore per ricava l'indice del dizionario da stampare
                         // della sequenza più lunga trovata fin'ora
                         vec.pop_back();
                         // Da stampare
-                        index = dict[vec];
+                        index = dict(vec);
 
                         ch = next > 0 ? next : ch;
                 }
-                                                
-                // std::cout << std::format("({}, {})", index, char(ch));
-                // std::cout << std::format(" dict.size = {}, n_bits = {}\n", dict.size() - 1, n_bits);
+
+                std::cout << std::format("({}, {})", index, char(ch));
+                std::cout << std::format(" dict.size = {}, n_bits = {}\n", dict.size() - 1, n_bits);
                 if (dict.size() != 1) {
                         bw(index, n_bits);
                 }
                 bw(ch, 8);
-                
-                
+
+
         } while (is);
         return true;
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char **argv) {
         if (!lz78encode(argv[1], argv[2], 2)) {
                 return 1;
         }

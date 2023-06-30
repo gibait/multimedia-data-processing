@@ -66,11 +66,11 @@ using rgba = std::array<uint8_t, 4>;
 struct seenPixels {
         std::array<rgba, 64> data_{};
 
-        std::array<uint8_t, 4> &operator()(unsigned index) {
+        rgba &operator()(unsigned index) {
                 return data_.at(index);
         }
 
-        void insert(std::array<uint8_t, 4> toPush) {
+        void insert(rgba toPush) {
                 auto index = hash_function(toPush);
                 data_[index] = toPush;
         }

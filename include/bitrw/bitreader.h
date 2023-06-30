@@ -2,6 +2,7 @@
 // Created by giba on 31/03/23.
 //
 
+#include <cstdint>
 #include <fstream>
 
 template<typename T>
@@ -12,7 +13,7 @@ std::istream &raw_read(std::istream &is, T &val, size_t size = sizeof(T)) {
 class bitreader {
         uint8_t buffer_;
         uint8_t n_ = 0;
-        std::istream& is_;
+        std::istream &is_;
 
 public:
         explicit bitreader(std::istream &is) : is_(is) {}
@@ -28,7 +29,7 @@ public:
 
         uint32_t read(uint8_t n) {
                 uint32_t u = 0;
-                while (n --> 0) {
+                while (n-- > 0) {
                         u = (u << 1) | read_bit();
                 }
                 return u;

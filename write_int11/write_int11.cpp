@@ -2,18 +2,19 @@
 // Created by giba on 15/03/23.
 //
 
+#include <bitset>
+#include <cstdint>
 #include <fstream>
 #include <iostream>
-#include <bitset>
 
 void usage() {
         std::cout << "Usage: write_int11 <filein.txt> <fileout.bin>" << std::endl;
         exit(EXIT_FAILURE);
 }
 
-template <typename T>
-std::ostream &raw_write(std::ostream& os, const T& val, size_t size = sizeof(T)) {
-        os.write(reinterpret_cast<const char*>(&val), size);
+template<typename T>
+std::ostream &raw_write(std::ostream &os, const T &val, size_t size = sizeof(T)) {
+        return os.write(reinterpret_cast<const char *>(&val), size);
 }
 
 class bitwriter {
@@ -34,22 +35,23 @@ class bitwriter {
 
         // Writes the n least significant bits of given bit
         // from the most significant to the least significant
-        std::ostream& write(uint32_t bit, uint8_t n) {
-                while(n --> 0) {
+        std::ostream &write(uint32_t bit, uint8_t n) {
+                while (n-- > 0) {
                         write_bit(bit >> n);
                 }
                 return os_;
         }
 
 public:
-
-        explicit bitwriter(std::ostream& os) : os_(os), buffer_(0), nbits_(0) {};
+        explicit bitwriter(std::ostream &os) : os_(os),
+                                               buffer_(0),
+                                               nbits_(0){};
 
         ~bitwriter() {
                 flush();
         };
 
-        std::ostream& operator()(uint32_t u, uint8_t n) {
+        std::ostream &operator()(uint32_t u, uint8_t n) {
                 return write(u, n);
         }
 
@@ -61,7 +63,6 @@ public:
                 }
                 return os_;
         }
-
 };
 
 int main(int argc, char** argv) {
